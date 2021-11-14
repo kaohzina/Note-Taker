@@ -1,35 +1,25 @@
-const router = require("express").Router();
-const { filterByQuery, findById, createNewAnimal, validateAnimal, } = require("../../lib/animals");
-const { notes } = require("../../data/notes");
+const router = require('express').Router();
+let db = require('../db/db.json')
+const fs = require('fs')
 
-router.get("/animals", (req, res) => {
-  let results = animals;
-  if (req.query) {
-    results = filterByQuery(req.query, results);
-  }
-  res.json(results);
+
+router.get("/notes", (req, res) => {
+    res.json(db);
 });
 
-router.get("/animals/:id", (req, res) => {
-  const result = findById(req.params.id, animals);
-  if (result) {
-    res.json(result);
-  } else {
-    res.send(404);
-  }
+router.post("/notes", (req, res) => {
+    
+    const newNote = req.body;
+    db.push(newNote);
+    res.json(db);
+})
+
+router.delete("/notes/:id", (req, res) => {
+    let noteID = req.params.id.toString();
+    
+    const newData =db.filter(note => note.id != noteID);
+    console.log('we got halfway', newData)
+    db = newData;
+    res.json(db);
 });
-
-router.post("/animals", (req, res) => {
-  // set id based on what the next index of the array will be
-  req.body.id = animals.length.toString();
-
-  // if any data in req.body is incorrect, send 400 error back
-  if (!validateAnimal(req.body)) {
-    res.status(400).send("The animal is not properly formatted.");
-  } else {
-    const animal = createNewAnimal(req.body, animals);
-    res.json(animal);
-  }
-});
-
 module.exports = router;
