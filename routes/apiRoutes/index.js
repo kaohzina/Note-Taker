@@ -1,20 +1,25 @@
 const router = require('express').Router();
+const fs = require('fs');
 let db = require('../../db/db.json');
+const { v4: uuidv4 } = require('uuid');
 
 router.get('/notes', (req, res) => {
   res.json(db);
 });
 
-
 router.post('/notes', (req, res) => {
-  req.body.id = notes.length.toString();
+    req.body.id = uuidv4();
+    const note = req.body;
+    db.push(note);
+    res.json(db);
+});
 
-  if (!validateNote(req.body)) {
-    res.status(400).send('The note is not properly formatted.');
+router.get('/notes/:id', (req,res) => {
+  const result = findById(req.params.id);
+  if(result) {
+    res.json(result);
   } else {
-    const note = newNote(req.body, notes);
-    db.push(newNote)
-    res.json(note);
+    res.send(404);
   }
 });
 
