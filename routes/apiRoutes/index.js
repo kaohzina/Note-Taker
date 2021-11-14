@@ -23,4 +23,11 @@ router.get('/notes/:id', (req,res) => {
   }
 });
 
+router.delete('/notes/:id', (req, res) => {
+  let noteId = req.params.id.toString(); 
+  const noteData = db.filter(db => db.id !== noteId);
+  db = noteData
+  res.json(noteData);
+})
+
 module.exports = router;
